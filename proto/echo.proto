@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package access;
+
+option go_package = "github.com/mikekbnv/grpc-react-web/proto;access";
+
+
+service Access {
+    rpc AccessCheck(AccessRequest) returns(AccessResponse) {};
+    rpc Echo (AccessRequest) returns (AccessResponse) {}
+
+ }
+ 
+message AccessRequest {
+    string id = 1;
+    string file_name = 2;
+    bytes  chunk = 3;
+}
+
+message AccessResponse {
+    bool access = 1;
+}
+
+//The echo service definition.
+// service Echo {
+//     // Echoes the user's message.
+//     rpc Echo (Msg) returns (Reply) {}
+// }
+// message FileUploadRequest {
+//     string file_name = 1;
+    
+// }
+// message FileUploadResponse {
+//   string file_name = 1;
+//   uint32 size = 2;
+//   string text = 3;
+// }

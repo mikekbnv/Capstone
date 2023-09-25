@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+
+  envoy:
+    build:
+      context: ./envoy
+      dockerfile: Dockerfile
+    image: mikemkbnv/grpc-web-envoy
+    ports:
+      - "8080:8080"
+    links:
+      - access-server
+
+  access-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mikemkbnv/grpc-web-access
+    ports:
+      - "9000:9000"
+    volumes:
+      - /Users/mkkbnv/go/src/grpc-react-web/images:/app/data
