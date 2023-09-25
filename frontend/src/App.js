@@ -24,7 +24,7 @@ class GrpcClient extends Component {
   handleSendRequest = () => {
     const { inputText, selectedFile } = this.state;
 
-    const client = new AccessClient('http://localhost:8080', null, null);
+    const client = new AccessClient('http://0.0.0.0:8080', null, null);
 
     const reader = new FileReader();
     reader.onload = () => {
