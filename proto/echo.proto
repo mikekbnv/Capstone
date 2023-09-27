@@ -6,20 +6,24 @@ option go_package = "github.com/mikekbnv/grpc-react-web/proto;access";
 
 
 service Access {
-    rpc AccessCheck(AccessRequest) returns(AccessResponse) {};
-    rpc Echo (AccessRequest) returns (AccessResponse) {}
-
+    rpc AccessCheck(EntranceRequest) returns(Response) {};
+    rpc ExitCheck(ExitRequest) returns(Response) {};
+    //rpc Echo (AccessRequest) returns (AccessResponse) {}
  }
  
-message AccessRequest {
+message EntranceRequest {
     string id = 1;
     string file_name = 2;
     bytes  chunk = 3;
 }
+message ExitRequest {
+    string id = 1;
+}
 
-message AccessResponse {
+message Response {
     bool access = 1;
 }
+
 
 //The echo service definition.
 // service Echo {

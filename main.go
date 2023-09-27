@@ -21,23 +21,28 @@ type server struct {
 	pb.UnimplementedAccessServer
 }
 
-func (s *server) Echo(ctx context.Context, n *pb.AccessRequest) (*pb.AccessResponse, error) {
-	log.Printf("Recieved a msg: %v", n.Id)
-	return &pb.AccessResponse{Access: true}, nil
-}
+// func (s *server) Echo(ctx context.Context, n *pb.AccessRequest) (*pb.AccessResponse, error) {
+// 	log.Printf("Recieved a msg: %v", n.Id)
+// 	return &pb.AccessResponse{Access: true}, nil
+// }
 
-func (s *server) AccessCheck(ctx context.Context, req *pb.AccessRequest) (*pb.AccessResponse, error) {
+func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.Response, error) {
 	var buffer bytes.Buffer
 	_, err := buffer.Write(req.Chunk)
 	if err != nil {
-		return &pb.AccessResponse{}, err
+		return &pb.Response{}, err
 	}
 	err = saveToFile("data", req.FileName, buffer.Bytes())
 	if err != nil {
-		return &pb.AccessResponse{}, err
+		return &pb.Response{}, err
 	}
-
-	return &pb.AccessResponse{Access: true}, nil
+	//TODO: access check logic
+	return &pb.Response{Access: true}, nil
+}
+func (s *server) ExitCheck(ctx context.Context, req *pb.ExitRequest) (*pb.Response, error) {
+	//TODO: exit check logic
+	log.Printf("Recieved a msg: %v", req.Id)
+	return &pb.Response{Access: true}, nil
 }
 
 func saveToFile(folderPath, fileName string, data []byte) error {
@@ -57,7 +62,7 @@ func saveToFile(folderPath, fileName string, data []byte) error {
 	return nil
 }
 func main() {
-	
+
 	lis, err := net.Listen("tcp", listenAddress)
 
 	if err != nil {

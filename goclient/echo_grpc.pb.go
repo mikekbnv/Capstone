@@ -22,8 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccessClient interface {
-	AccessCheck(ctx context.Context, in *AccessRequest, opts ...grpc.CallOption) (*AccessResponse, error)
-	Echo(ctx context.Context, in *AccessRequest, opts ...grpc.CallOption) (*AccessResponse, error)
+	AccessCheck(ctx context.Context, in *EntranceRequest, opts ...grpc.CallOption) (*Response, error)
+	ExitCheck(ctx context.Context, in *ExitRequest, opts ...grpc.CallOption) (*Response, error)
 }
 
 type accessClient struct {
@@ -34,8 +34,8 @@ func NewAccessClient(cc grpc.ClientConnInterface) AccessClient {
 	return &accessClient{cc}
 }
 
-func (c *accessClient) AccessCheck(ctx context.Context, in *AccessRequest, opts ...grpc.CallOption) (*AccessResponse, error) {
-	out := new(AccessResponse)
+func (c *accessClient) AccessCheck(ctx context.Context, in *EntranceRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/access.Access/AccessCheck", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -43,9 +43,9 @@ func (c *accessClient) AccessCheck(ctx context.Context, in *AccessRequest, opts 
 	return out, nil
 }
 
-func (c *accessClient) Echo(ctx context.Context, in *AccessRequest, opts ...grpc.CallOption) (*AccessResponse, error) {
-	out := new(AccessResponse)
-	err := c.cc.Invoke(ctx, "/access.Access/Echo", in, out, opts...)
+func (c *accessClient) ExitCheck(ctx context.Context, in *ExitRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/access.Access/ExitCheck", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +56,8 @@ func (c *accessClient) Echo(ctx context.Context, in *AccessRequest, opts ...grpc
 // All implementations must embed UnimplementedAccessServer
 // for forward compatibility
 type AccessServer interface {
-	AccessCheck(context.Context, *AccessRequest) (*AccessResponse, error)
-	Echo(context.Context, *AccessRequest) (*AccessResponse, error)
+	AccessCheck(context.Context, *EntranceRequest) (*Response, error)
+	ExitCheck(context.Context, *ExitRequest) (*Response, error)
 	mustEmbedUnimplementedAccessServer()
 }
 
@@ -65,11 +65,11 @@ type AccessServer interface {
 type UnimplementedAccessServer struct {
 }
 
-func (UnimplementedAccessServer) AccessCheck(context.Context, *AccessRequest) (*AccessResponse, error) {
+func (UnimplementedAccessServer) AccessCheck(context.Context, *EntranceRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AccessCheck not implemented")
 }
-func (UnimplementedAccessServer) Echo(context.Context, *AccessRequest) (*AccessResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
+func (UnimplementedAccessServer) ExitCheck(context.Context, *ExitRequest) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExitCheck not implemented")
 }
 func (UnimplementedAccessServer) mustEmbedUnimplementedAccessServer() {}
 
@@ -85,7 +85,7 @@ func RegisterAccessServer(s grpc.ServiceRegistrar, srv AccessServer) {
 }
 
 func _Access_AccessCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AccessRequest)
+	in := new(EntranceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -97,25 +97,25 @@ func _Access_AccessCheck_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/access.Access/AccessCheck",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccessServer).AccessCheck(ctx, req.(*AccessRequest))
+		return srv.(AccessServer).AccessCheck(ctx, req.(*EntranceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Access_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AccessRequest)
+func _Access_ExitCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExitRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccessServer).Echo(ctx, in)
+		return srv.(AccessServer).ExitCheck(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/access.Access/Echo",
+		FullMethod: "/access.Access/ExitCheck",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccessServer).Echo(ctx, req.(*AccessRequest))
+		return srv.(AccessServer).ExitCheck(ctx, req.(*ExitRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -132,8 +132,8 @@ var Access_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Access_AccessCheck_Handler,
 		},
 		{
-			MethodName: "Echo",
-			Handler:    _Access_Echo_Handler,
+			MethodName: "ExitCheck",
+			Handler:    _Access_ExitCheck_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

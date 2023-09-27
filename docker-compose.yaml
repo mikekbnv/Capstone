@@ -8,8 +8,8 @@ services:
     image: mikemkbnv/grpc-web-envoy
     ports:
       - "8080:8080"
-    # links:
-    #   - access-server
+    links:
+      - access-server
 
   access-server:
     build:
