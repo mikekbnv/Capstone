@@ -77,33 +77,33 @@ proto.access.AccessPromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.access.AccessRequest,
- *   !proto.access.AccessResponse>}
+ *   !proto.access.EntranceRequest,
+ *   !proto.access.Response>}
  */
 const methodDescriptor_Access_AccessCheck = new grpc.web.MethodDescriptor(
   '/access.Access/AccessCheck',
   grpc.web.MethodType.UNARY,
-  proto.access.AccessRequest,
-  proto.access.AccessResponse,
+  proto.access.EntranceRequest,
+  proto.access.Response,
   /**
-   * @param {!proto.access.AccessRequest} request
+   * @param {!proto.access.EntranceRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.access.AccessResponse.deserializeBinary
+  proto.access.Response.deserializeBinary
 );
 
 
 /**
- * @param {!proto.access.AccessRequest} request The
+ * @param {!proto.access.EntranceRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.access.AccessResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.access.Response)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.access.AccessResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.access.Response>|undefined}
  *     The XHR Node Readable Stream
  */
 proto.access.AccessClient.prototype.accessCheck =
@@ -118,11 +118,11 @@ proto.access.AccessClient.prototype.accessCheck =
 
 
 /**
- * @param {!proto.access.AccessRequest} request The
+ * @param {!proto.access.EntranceRequest} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.access.AccessResponse>}
+ * @return {!Promise<!proto.access.Response>}
  *     Promise that resolves to the response
  */
 proto.access.AccessPromiseClient.prototype.accessCheck =
@@ -138,61 +138,61 @@ proto.access.AccessPromiseClient.prototype.accessCheck =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.access.AccessRequest,
- *   !proto.access.AccessResponse>}
+ *   !proto.access.ExitRequest,
+ *   !proto.access.Response>}
  */
-const methodDescriptor_Access_Echo = new grpc.web.MethodDescriptor(
-  '/access.Access/Echo',
+const methodDescriptor_Access_ExitCheck = new grpc.web.MethodDescriptor(
+  '/access.Access/ExitCheck',
   grpc.web.MethodType.UNARY,
-  proto.access.AccessRequest,
-  proto.access.AccessResponse,
+  proto.access.ExitRequest,
+  proto.access.Response,
   /**
-   * @param {!proto.access.AccessRequest} request
+   * @param {!proto.access.ExitRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.access.AccessResponse.deserializeBinary
+  proto.access.Response.deserializeBinary
 );
 
 
 /**
- * @param {!proto.access.AccessRequest} request The
+ * @param {!proto.access.ExitRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.access.AccessResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.access.Response)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.access.AccessResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.access.Response>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.access.AccessClient.prototype.echo =
+proto.access.AccessClient.prototype.exitCheck =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/access.Access/Echo',
+      '/access.Access/ExitCheck',
       request,
       metadata || {},
-      methodDescriptor_Access_Echo,
+      methodDescriptor_Access_ExitCheck,
       callback);
 };
 
 
 /**
- * @param {!proto.access.AccessRequest} request The
+ * @param {!proto.access.ExitRequest} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.access.AccessResponse>}
+ * @return {!Promise<!proto.access.Response>}
  *     Promise that resolves to the response
  */
-proto.access.AccessPromiseClient.prototype.echo =
+proto.access.AccessPromiseClient.prototype.exitCheck =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/access.Access/Echo',
+      '/access.Access/ExitCheck',
       request,
       metadata || {},
-      methodDescriptor_Access_Echo);
+      methodDescriptor_Access_ExitCheck);
 };
 
 
