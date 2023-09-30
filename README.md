@@ -15,3 +15,4 @@ TODO:
 - [ ] Add face-regocnition service (Python)
 - [ ] Integrate S3 storage
 - [ ] Combine face-recognition service with S3
+- [ ] Implement functional components for React
