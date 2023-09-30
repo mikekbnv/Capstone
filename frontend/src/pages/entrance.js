@@ -1,6 +1,17 @@
 import React, { Component } from 'react';
+import { Input, Button, Modal } from 'antd';
+
 import { AccessClient } from '../jsclient/echo_grpc_web_pb';
 import { EntranceRequest } from '../jsclient/echo_pb';
+import "../App.css";
+
+const ModalFooter = ({ onClose, isAuth }) => (
+  <div style={{  textAlign: 'center', margin: '0 auto' }}>
+    <Button type="primary" onClick={onClose} danger={!isAuth}>
+      {isAuth ? 'Authorized' : 'Not Authorized'}
+    </Button>
+  </div>
+);
 
 class Entrance extends Component {
   constructor(props) {
@@ -9,6 +20,7 @@ class Entrance extends Component {
       Id: '',
       videoStream: null,
       responseText: '',
+      isModalOpen: false,
     };
     this.videoRef = React.createRef();
   }
@@ -25,15 +37,23 @@ class Entrance extends Component {
     } catch (error) {
       console.error('Error accessing camera:', error);
     }
+    
   };
 
   stopCamera = () => {
     const { videoStream } = this.state;
     if (videoStream) {
       videoStream.getTracks().forEach((track) => track.stop());
+    // setState -> useState => [value, setValue]
+    // setVideoStream(null)
+
       this.setState({ videoStream: null });
     }
   };
+
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
+  }
 
   handleSendRequest = () => {
     const { Id } = this.state;
@@ -59,8 +79,9 @@ class Entrance extends Component {
           client.accessCheck(request, {}, (err, response) => {
             if (!err) {
               const responseText = response.getAccess();
+              this.setState({ isModalOpen: true});
               console.log('Response:', responseText);
-              this.setState({ responseText: responseText.toString() });
+              this.setState({ responseText: responseText.toString(), isModalOpen: true });
             } else {
               console.error('Error:', err);
             }
@@ -74,34 +95,40 @@ class Entrance extends Component {
   };
 
   componentDidMount() {
+    // useEffect
     this.startCamera();
   }
 
   componentWillUnmount() {
+    // useEffect
+
     this.stopCamera();
   }
 
   render() {
     return (
-      <div>
-        <h1>Entrance</h1>
+      <div className="top-margin">
         <div>
-          <input
+          <Button type="primary" block onClick={this.handleSendRequest}>Get access</Button>
+          <br /><br />
+          <Input  className="input-text"
             type="text"
             placeholder="Enter ID"
             value={this.state.Id}
             onChange={this.handleTextChange}
           />
-          <button onClick={this.handleSendRequest}>Send Request</button>
         </div>
         <div>
-          <p>Camera:</p>
-          <video ref={this.videoRef} autoPlay />
+          <video className="camera-caption" ref={this.videoRef} autoPlay />
         </div>
-        <div>
-          <p>Response:</p>
-          <p>{this.state.responseText}</p>
-        </div>
+        <Modal 
+          title="Access" 
+          open={this.state.isModalOpen} 
+          onCancel={this.closeModal}
+          footer={() => <ModalFooter onClose={this.closeModal} isAuth={this.state.responseText} />}
+        >
+          <p>{this.state.responseText ? 'Welcome ...' : 'Not allowed'}</p>
+        </Modal>
       </div>
     );
   }

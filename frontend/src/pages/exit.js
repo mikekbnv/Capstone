@@ -1,55 +1,76 @@
 import React, { Component } from 'react';
+import { Input, Button, Modal } from 'antd';
+
 import { AccessClient } from '../jsclient/echo_grpc_web_pb';
 import { ExitRequest } from '../jsclient/echo_pb';
+import "../App.css";
 
+const ModalFooter = ({ onClose, isAuth }) => (
+  <div style={{  textAlign: 'center', margin: '0 auto' }}>
+    <Button type="primary" onClick={onClose} danger={!isAuth}>
+      {isAuth ? 'Authorized' : 'Not Authorized'}
+    </Button>
+  </div>
+);
 
 class Exit extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputText: '',
+      Id: '',
       responseText: '',
+      isModalOpen: false,
     };
   }
 
   handleTextChange = (event) => {
-    this.setState({ inputText: event.target.value });
+    this.setState({ Id: event.target.value });
   };
+
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
+  }
 
   handleSendRequest = () => {
-    const { inputText } = this.state;
-
+    const { Id } = this.state;
+    
     const client = new AccessClient('http://0.0.0.0:8080', null, null);
     const request = new ExitRequest();
-    request.setId(inputText);
+    request.setId(Id);
+    
     client.exitCheck(request, {}, (err, response) => {
-        if (!err) {
-          const responseText = response.getAccess();
-          console.log('Response:', responseText);
-          this.setState({ responseText: response.getAccess().toString() });
-        } else {
-          console.error('Error:', err);
-        }
+      if (!err) {
+        const responseText = response.getAccess();
+        this.setState({ isModalOpen: true});
+        console.log('Response:', responseText);
+        this.setState({ responseText: responseText.toString(), isModalOpen: true });
+      } else {
+        console.error('Error:', err);
+      }
     });
   };
-
+    
   render() {
     return (
-      <div>
-        <h1>Exit</h1>
+      <div className="top-margin">
         <div>
-          <input
+          <Button type="primary" block onClick={this.handleSendRequest}>Exit</Button>
+          <br /><br />
+          <Input  className="input-text"
             type="text"
             placeholder="Enter ID"
-            value={this.state.inputText}
+            value={this.state.Id}
             onChange={this.handleTextChange}
           />
-          <button onClick={this.handleSendRequest}>Send Request</button>
         </div>
-        <div>
-          <p>Response:</p>
-          <p>{this.state.responseText}</p>
-        </div>
+        <Modal 
+          title="Exit" 
+          open={this.state.isModalOpen} 
+          onCancel={this.closeModal}
+          footer={() => <ModalFooter onClose={this.closeModal} isAuth={true} />}
+        >
+          <p>{this.state.responseText ? 'Bye...' : 'Not allowed'}</p>
+        </Modal>
       </div>
     );
   }
