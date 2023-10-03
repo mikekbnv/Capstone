@@ -7,7 +7,7 @@ TODO:
 - [x] Set up docker for separate services (client, server, proxy) 
 - [ ] Create models/types for DBs
 - [ ] Integrate PostgreSQL
-- [ ] Add postgre docker
+- [x] Add postgres docker
 - [ ] Add admin add employee functionality
 - [ ] Add admin view/update/delete employee functionality
 - [ ] Combine backend with DBs
