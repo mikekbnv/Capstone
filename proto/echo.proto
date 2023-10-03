@@ -8,9 +8,11 @@ option go_package = "github.com/mikekbnv/grpc-react-web/proto;access";
 service Access {
     rpc AccessCheck(EntranceRequest) returns(Response) {};
     rpc ExitCheck(ExitRequest) returns(Response) {};
+    rpc AddEmployee(EmployeeRequest) returns(EmployeeResponse) {};
+    rpc ListEmployee(ListEmployeeRequest) returns(ListEmployeeResponse) {};
     //rpc Echo (AccessRequest) returns (AccessResponse) {}
  }
- 
+
 message EntranceRequest {
     string id = 1;
     string file_name = 2;
@@ -19,11 +21,27 @@ message EntranceRequest {
 message ExitRequest {
     string id = 1;
 }
-
 message Response {
     bool access = 1;
 }
 
+message Employee {
+    int32 id = 1;
+    string fname = 2;
+    string lname = 3;
+}
+message EmployeeRequest {
+    Employee employee = 1;
+}
+message EmployeeResponse {
+   int32 id = 1;
+}
+message ListEmployeeRequest {
+
+}
+message ListEmployeeResponse {
+    repeated Employee employees = 1;
+}
 
 //The echo service definition.
 // service Echo {

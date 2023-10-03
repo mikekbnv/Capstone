@@ -24,6 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type AccessClient interface {
 	AccessCheck(ctx context.Context, in *EntranceRequest, opts ...grpc.CallOption) (*Response, error)
 	ExitCheck(ctx context.Context, in *ExitRequest, opts ...grpc.CallOption) (*Response, error)
+	AddEmployee(ctx context.Context, in *EmployeeRequest, opts ...grpc.CallOption) (*EmployeeResponse, error)
+	ListEmployee(ctx context.Context, in *ListEmployeeRequest, opts ...grpc.CallOption) (*ListEmployeeResponse, error)
 }
 
 type accessClient struct {
@@ -52,12 +54,32 @@ func (c *accessClient) ExitCheck(ctx context.Context, in *ExitRequest, opts ...g
 	return out, nil
 }
 
+func (c *accessClient) AddEmployee(ctx context.Context, in *EmployeeRequest, opts ...grpc.CallOption) (*EmployeeResponse, error) {
+	out := new(EmployeeResponse)
+	err := c.cc.Invoke(ctx, "/access.Access/AddEmployee", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accessClient) ListEmployee(ctx context.Context, in *ListEmployeeRequest, opts ...grpc.CallOption) (*ListEmployeeResponse, error) {
+	out := new(ListEmployeeResponse)
+	err := c.cc.Invoke(ctx, "/access.Access/ListEmployee", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccessServer is the server API for Access service.
 // All implementations must embed UnimplementedAccessServer
 // for forward compatibility
 type AccessServer interface {
 	AccessCheck(context.Context, *EntranceRequest) (*Response, error)
 	ExitCheck(context.Context, *ExitRequest) (*Response, error)
+	AddEmployee(context.Context, *EmployeeRequest) (*EmployeeResponse, error)
+	ListEmployee(context.Context, *ListEmployeeRequest) (*ListEmployeeResponse, error)
 	mustEmbedUnimplementedAccessServer()
 }
 
@@ -70,6 +92,12 @@ func (UnimplementedAccessServer) AccessCheck(context.Context, *EntranceRequest) 
 }
 func (UnimplementedAccessServer) ExitCheck(context.Context, *ExitRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExitCheck not implemented")
+}
+func (UnimplementedAccessServer) AddEmployee(context.Context, *EmployeeRequest) (*EmployeeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddEmployee not implemented")
+}
+func (UnimplementedAccessServer) ListEmployee(context.Context, *ListEmployeeRequest) (*ListEmployeeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEmployee not implemented")
 }
 func (UnimplementedAccessServer) mustEmbedUnimplementedAccessServer() {}
 
@@ -120,6 +148,42 @@ func _Access_ExitCheck_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Access_AddEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmployeeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccessServer).AddEmployee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/access.Access/AddEmployee",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccessServer).AddEmployee(ctx, req.(*EmployeeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Access_ListEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEmployeeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccessServer).ListEmployee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/access.Access/ListEmployee",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccessServer).ListEmployee(ctx, req.(*ListEmployeeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Access_ServiceDesc is the grpc.ServiceDesc for Access service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +198,14 @@ var Access_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExitCheck",
 			Handler:    _Access_ExitCheck_Handler,
+		},
+		{
+			MethodName: "AddEmployee",
+			Handler:    _Access_AddEmployee_Handler,
+		},
+		{
+			MethodName: "ListEmployee",
+			Handler:    _Access_ListEmployee_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

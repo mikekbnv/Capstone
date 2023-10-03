@@ -81,7 +81,7 @@ class Entrance extends Component {
               const responseText = response.getAccess();
               this.setState({ isModalOpen: true});
               console.log('Response:', responseText);
-              this.setState({ responseText: responseText.toString(), isModalOpen: true });
+              this.setState({ responseText: responseText, isModalOpen: true });
             } else {
               console.error('Error:', err);
             }

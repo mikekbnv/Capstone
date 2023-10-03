@@ -196,5 +196,127 @@ proto.access.AccessPromiseClient.prototype.exitCheck =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.access.EmployeeRequest,
+ *   !proto.access.EmployeeResponse>}
+ */
+const methodDescriptor_Access_AddEmployee = new grpc.web.MethodDescriptor(
+  '/access.Access/AddEmployee',
+  grpc.web.MethodType.UNARY,
+  proto.access.EmployeeRequest,
+  proto.access.EmployeeResponse,
+  /**
+   * @param {!proto.access.EmployeeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.access.EmployeeResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.access.EmployeeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.access.EmployeeResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.access.EmployeeResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.access.AccessClient.prototype.addEmployee =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/access.Access/AddEmployee',
+      request,
+      metadata || {},
+      methodDescriptor_Access_AddEmployee,
+      callback);
+};
+
+
+/**
+ * @param {!proto.access.EmployeeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.access.EmployeeResponse>}
+ *     Promise that resolves to the response
+ */
+proto.access.AccessPromiseClient.prototype.addEmployee =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/access.Access/AddEmployee',
+      request,
+      metadata || {},
+      methodDescriptor_Access_AddEmployee);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.access.ListEmployeeRequest,
+ *   !proto.access.ListEmployeeResponse>}
+ */
+const methodDescriptor_Access_ListEmployee = new grpc.web.MethodDescriptor(
+  '/access.Access/ListEmployee',
+  grpc.web.MethodType.UNARY,
+  proto.access.ListEmployeeRequest,
+  proto.access.ListEmployeeResponse,
+  /**
+   * @param {!proto.access.ListEmployeeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.access.ListEmployeeResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.access.ListEmployeeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.access.ListEmployeeResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.access.ListEmployeeResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.access.AccessClient.prototype.listEmployee =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/access.Access/ListEmployee',
+      request,
+      metadata || {},
+      methodDescriptor_Access_ListEmployee,
+      callback);
+};
+
+
+/**
+ * @param {!proto.access.ListEmployeeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.access.ListEmployeeResponse>}
+ *     Promise that resolves to the response
+ */
+proto.access.AccessPromiseClient.prototype.listEmployee =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/access.Access/ListEmployee',
+      request,
+      metadata || {},
+      methodDescriptor_Access_ListEmployee);
+};
+
+
 module.exports = proto.access;
 
