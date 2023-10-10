@@ -9,25 +9,27 @@ service Access {
     rpc AccessCheck(EntranceRequest) returns(Response) {};
     rpc ExitCheck(ExitRequest) returns(Response) {};
     rpc AddEmployee(EmployeeRequest) returns(EmployeeResponse) {};
-    rpc ListEmployee(ListEmployeeRequest) returns(ListEmployeeResponse) {};
+    rpc DeleteEmployee(DeleteEmployeeRequest) returns(EmptyResponse) {};   
+    rpc ListEmployees(EmptyRequest) returns(ListEmployeesResponse) {};
  }
 
 message EntranceRequest {
-    string id = 1;
+    int32 id = 1;
     string file_name = 2;
     bytes  chunk = 3;
 }
 message ExitRequest {
-    string id = 1;
+    int32 id = 1;
 }
 message Response {
     bool access = 1;
 }
-
 message Employee {
     int32 id = 1;
     string fname = 2;
     string lname = 3;
+    string position = 4;
+    bytes photo = 5;
 }
 message EmployeeRequest {
     Employee employee = 1;
@@ -35,11 +37,17 @@ message EmployeeRequest {
 message EmployeeResponse {
    int32 id = 1;
 }
-message ListEmployeeRequest {
+message ListEmployeesResponse {
+    repeated Employee employees = 1;
+}
+message DeleteEmployeeRequest {
+    int32 id = 1;
+}
+message EmptyResponse {
 
 }
-message ListEmployeeResponse {
-    repeated Employee employees = 1;
+message EmptyRequest {
+
 }
 
 //The echo service definition.

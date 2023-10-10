@@ -7,5 +7,5 @@ import (
 
 func main() {
 	database.ConnectDb()
-	go handlers.RunServer()
+	handlers.RunServer()
 }

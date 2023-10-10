@@ -25,7 +25,8 @@ type AccessClient interface {
 	AccessCheck(ctx context.Context, in *EntranceRequest, opts ...grpc.CallOption) (*Response, error)
 	ExitCheck(ctx context.Context, in *ExitRequest, opts ...grpc.CallOption) (*Response, error)
 	AddEmployee(ctx context.Context, in *EmployeeRequest, opts ...grpc.CallOption) (*EmployeeResponse, error)
-	ListEmployee(ctx context.Context, in *ListEmployeeRequest, opts ...grpc.CallOption) (*ListEmployeeResponse, error)
+	DeleteEmployee(ctx context.Context, in *DeleteEmployeeRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	ListEmployees(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ListEmployeesResponse, error)
 }
 
 type accessClient struct {
@@ -63,9 +64,18 @@ func (c *accessClient) AddEmployee(ctx context.Context, in *EmployeeRequest, opt
 	return out, nil
 }
 
-func (c *accessClient) ListEmployee(ctx context.Context, in *ListEmployeeRequest, opts ...grpc.CallOption) (*ListEmployeeResponse, error) {
-	out := new(ListEmployeeResponse)
-	err := c.cc.Invoke(ctx, "/access.Access/ListEmployee", in, out, opts...)
+func (c *accessClient) DeleteEmployee(ctx context.Context, in *DeleteEmployeeRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, "/access.Access/DeleteEmployee", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accessClient) ListEmployees(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ListEmployeesResponse, error) {
+	out := new(ListEmployeesResponse)
+	err := c.cc.Invoke(ctx, "/access.Access/ListEmployees", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +89,8 @@ type AccessServer interface {
 	AccessCheck(context.Context, *EntranceRequest) (*Response, error)
 	ExitCheck(context.Context, *ExitRequest) (*Response, error)
 	AddEmployee(context.Context, *EmployeeRequest) (*EmployeeResponse, error)
-	ListEmployee(context.Context, *ListEmployeeRequest) (*ListEmployeeResponse, error)
+	DeleteEmployee(context.Context, *DeleteEmployeeRequest) (*EmptyResponse, error)
+	ListEmployees(context.Context, *EmptyRequest) (*ListEmployeesResponse, error)
 	mustEmbedUnimplementedAccessServer()
 }
 
@@ -96,8 +107,11 @@ func (UnimplementedAccessServer) ExitCheck(context.Context, *ExitRequest) (*Resp
 func (UnimplementedAccessServer) AddEmployee(context.Context, *EmployeeRequest) (*EmployeeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddEmployee not implemented")
 }
-func (UnimplementedAccessServer) ListEmployee(context.Context, *ListEmployeeRequest) (*ListEmployeeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListEmployee not implemented")
+func (UnimplementedAccessServer) DeleteEmployee(context.Context, *DeleteEmployeeRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEmployee not implemented")
+}
+func (UnimplementedAccessServer) ListEmployees(context.Context, *EmptyRequest) (*ListEmployeesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEmployees not implemented")
 }
 func (UnimplementedAccessServer) mustEmbedUnimplementedAccessServer() {}
 
@@ -166,20 +180,38 @@ func _Access_AddEmployee_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Access_ListEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListEmployeeRequest)
+func _Access_DeleteEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteEmployeeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccessServer).ListEmployee(ctx, in)
+		return srv.(AccessServer).DeleteEmployee(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/access.Access/ListEmployee",
+		FullMethod: "/access.Access/DeleteEmployee",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccessServer).ListEmployee(ctx, req.(*ListEmployeeRequest))
+		return srv.(AccessServer).DeleteEmployee(ctx, req.(*DeleteEmployeeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Access_ListEmployees_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccessServer).ListEmployees(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/access.Access/ListEmployees",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccessServer).ListEmployees(ctx, req.(*EmptyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -204,8 +236,12 @@ var Access_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Access_AddEmployee_Handler,
 		},
 		{
-			MethodName: "ListEmployee",
-			Handler:    _Access_ListEmployee_Handler,
+			MethodName: "DeleteEmployee",
+			Handler:    _Access_DeleteEmployee_Handler,
+		},
+		{
+			MethodName: "ListEmployees",
+			Handler:    _Access_ListEmployees_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

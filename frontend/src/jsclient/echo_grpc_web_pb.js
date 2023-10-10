@@ -260,61 +260,122 @@ proto.access.AccessPromiseClient.prototype.addEmployee =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.access.ListEmployeeRequest,
- *   !proto.access.ListEmployeeResponse>}
+ *   !proto.access.DeleteEmployeeRequest,
+ *   !proto.access.EmptyResponse>}
  */
-const methodDescriptor_Access_ListEmployee = new grpc.web.MethodDescriptor(
-  '/access.Access/ListEmployee',
+const methodDescriptor_Access_DeleteEmployee = new grpc.web.MethodDescriptor(
+  '/access.Access/DeleteEmployee',
   grpc.web.MethodType.UNARY,
-  proto.access.ListEmployeeRequest,
-  proto.access.ListEmployeeResponse,
+  proto.access.DeleteEmployeeRequest,
+  proto.access.EmptyResponse,
   /**
-   * @param {!proto.access.ListEmployeeRequest} request
+   * @param {!proto.access.DeleteEmployeeRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.access.ListEmployeeResponse.deserializeBinary
+  proto.access.EmptyResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.access.ListEmployeeRequest} request The
+ * @param {!proto.access.DeleteEmployeeRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.access.ListEmployeeResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.access.EmptyResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.access.ListEmployeeResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.access.EmptyResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.access.AccessClient.prototype.listEmployee =
+proto.access.AccessClient.prototype.deleteEmployee =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/access.Access/ListEmployee',
+      '/access.Access/DeleteEmployee',
       request,
       metadata || {},
-      methodDescriptor_Access_ListEmployee,
+      methodDescriptor_Access_DeleteEmployee,
       callback);
 };
 
 
 /**
- * @param {!proto.access.ListEmployeeRequest} request The
+ * @param {!proto.access.DeleteEmployeeRequest} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.access.ListEmployeeResponse>}
+ * @return {!Promise<!proto.access.EmptyResponse>}
  *     Promise that resolves to the response
  */
-proto.access.AccessPromiseClient.prototype.listEmployee =
+proto.access.AccessPromiseClient.prototype.deleteEmployee =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/access.Access/ListEmployee',
+      '/access.Access/DeleteEmployee',
       request,
       metadata || {},
-      methodDescriptor_Access_ListEmployee);
+      methodDescriptor_Access_DeleteEmployee);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.access.EmptyRequest,
+ *   !proto.access.ListEmployeesResponse>}
+ */
+const methodDescriptor_Access_ListEmployees = new grpc.web.MethodDescriptor(
+  '/access.Access/ListEmployees',
+  grpc.web.MethodType.UNARY,
+  proto.access.EmptyRequest,
+  proto.access.ListEmployeesResponse,
+  /**
+   * @param {!proto.access.EmptyRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.access.ListEmployeesResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.access.EmptyRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.access.ListEmployeesResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.access.ListEmployeesResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.access.AccessClient.prototype.listEmployees =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/access.Access/ListEmployees',
+      request,
+      metadata || {},
+      methodDescriptor_Access_ListEmployees,
+      callback);
+};
+
+
+/**
+ * @param {!proto.access.EmptyRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.access.ListEmployeesResponse>}
+ *     Promise that resolves to the response
+ */
+proto.access.AccessPromiseClient.prototype.listEmployees =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/access.Access/ListEmployees',
+      request,
+      metadata || {},
+      methodDescriptor_Access_ListEmployees);
 };
 
 

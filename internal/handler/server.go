@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"strconv"
 
 	"github.com/mikekbnv/grpc-react-web/database"
 	pb "github.com/mikekbnv/grpc-react-web/goclient"
@@ -26,17 +25,18 @@ type server struct {
 	pb.UnimplementedAccessServer
 }
 
-func (s *server) ListEmployee(ctx context.Context, req *pb.ListEmployeeRequest) (*pb.ListEmployeeResponse, error) {
-	//list employee logic
+func (s *server) ListEmployees(ctx context.Context, req *pb.EmptyRequest) (*pb.ListEmployeesResponse, error) {
+
 	employees := []types.Employee{}
 	database.DB.Db.Find(&employees)
-	resp := &pb.ListEmployeeResponse{}
+	resp := &pb.ListEmployeesResponse{}
 	data := []*pb.Employee{}
 	for _, employee := range employees {
 		data = append(data, &pb.Employee{
-			Id:    int32(employee.Id),
-			Fname: employee.First_Name,
-			Lname: employee.Last_Name,
+			Id:       int32(employee.Id),
+			Fname:    employee.First_Name,
+			Lname:    employee.Last_Name,
+			Position: employee.Role,
 		})
 	}
 	resp.Employees = data
@@ -44,16 +44,33 @@ func (s *server) ListEmployee(ctx context.Context, req *pb.ListEmployeeRequest) 
 
 }
 func (s *server) AddEmployee(ctx context.Context, req *pb.EmployeeRequest) (*pb.EmployeeResponse, error) {
-	//add employee logic
+
 	employee := new(types.Employee)
 	employee.First_Name = req.Employee.GetFname()
 	employee.Last_Name = req.Employee.GetLname()
+	employee.Role = req.Employee.GetPosition()
+	var photo bytes.Buffer
+	_, err := photo.Write(req.Employee.GetPhoto())
+	if err != nil {
+		return &pb.EmployeeResponse{}, err
+	}
 
 	database.DB.Db.Create(&employee)
-	fmt.Println(employee.Id)
+	err = utils.SaveToFile("data", fmt.Sprintf("%d.jpg", employee.Id), photo.Bytes())
+	if err != nil {
+		return &pb.EmployeeResponse{}, err
+	}
 	return &pb.EmployeeResponse{Id: int32(employee.Id)}, nil
 
 }
+func (s *server) DeleteEmployee(ctx context.Context, req *pb.DeleteEmployeeRequest) (*pb.EmptyResponse, error) {
+
+	employee := new(types.Employee)
+	employee.Id = int32(req.GetId())
+	database.DB.Db.Delete(&employee)
+	return &pb.EmptyResponse{}, nil
+}
+
 func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.Response, error) {
 	var buffer bytes.Buffer
 	_, err := buffer.Write(req.Chunk)
@@ -65,7 +82,7 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 		return &pb.Response{}, err
 	}
 
-	id, err := strconv.Atoi(req.Id)
+	id := req.Id
 	if err := database.DB.Db.First(&types.Employee{Id: id}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		return &pb.Response{Access: false}, nil
 	}
