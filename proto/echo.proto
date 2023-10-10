@@ -10,7 +10,6 @@ service Access {
     rpc ExitCheck(ExitRequest) returns(Response) {};
     rpc AddEmployee(EmployeeRequest) returns(EmployeeResponse) {};
     rpc ListEmployee(ListEmployeeRequest) returns(ListEmployeeResponse) {};
-    //rpc Echo (AccessRequest) returns (AccessResponse) {}
  }
 
 message EntranceRequest {

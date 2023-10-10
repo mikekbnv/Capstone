@@ -45,6 +45,7 @@ func ConnectDb() {
 
 	log.Println("running migrations")
 	db.AutoMigrate(&types.Employee{})
+	db.AutoMigrate(&types.Visit_log{})
 
 	DB = Dbinstance{
 		Db: db,
