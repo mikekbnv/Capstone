@@ -1,12 +1,14 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/mikekbnv/grpc-react-web/internal/types"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -16,7 +18,15 @@ type Dbinstance struct {
 	Db *gorm.DB
 }
 
-var DB Dbinstance
+var (
+	DB  Dbinstance
+	RDB = redis.NewClient(&redis.Options{
+		Addr:     "redis:6379",
+		Password: "",
+		DB:       0,
+	})
+	Ctx = context.Background()
+)
 
 func ConnectDb() {
 	err := godotenv.Load(".env")

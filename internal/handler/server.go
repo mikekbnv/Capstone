@@ -60,6 +60,10 @@ func (s *server) AddEmployee(ctx context.Context, req *pb.EmployeeRequest) (*pb.
 	if err != nil {
 		return &pb.EmployeeResponse{}, err
 	}
+	err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", employee.Id), photo.Bytes()).Err()
+	if err != nil {
+		panic(err)
+	}
 	return &pb.EmployeeResponse{Id: int32(employee.Id)}, nil
 
 }
@@ -68,6 +72,10 @@ func (s *server) DeleteEmployee(ctx context.Context, req *pb.DeleteEmployeeReque
 	employee := new(types.Employee)
 	employee.Id = int32(req.GetId())
 	database.DB.Db.Delete(&employee)
+	err := database.RDB.Del(ctx, fmt.Sprintf("%d-photos", employee.Id)).Err()
+	if err != nil {
+		panic(err)
+	}
 	return &pb.EmptyResponse{}, nil
 }
 
@@ -81,7 +89,10 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 	if err != nil {
 		return &pb.Response{}, err
 	}
-
+	err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", req.GetId()), buffer.Bytes()).Err()
+	if err != nil {
+		panic(err)
+	}
 	id := req.Id
 	if err := database.DB.Db.First(&types.Employee{Id: id}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		return &pb.Response{Access: false}, nil
