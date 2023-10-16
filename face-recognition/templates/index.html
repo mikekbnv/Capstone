@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Display</title>
+</head>
+<body>
+    {% for image in images %}
+        <img src="data:image/jpeg;base64,{{ image }}" alt="Image">
+    {% endfor %}
+</body>
+</html>
+
+<!-- 
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask Docker</title>
+</head>
+<body>
+    <h1>This is a Flask App containerised with Docker</h1>
+</body>
+</html> -->
