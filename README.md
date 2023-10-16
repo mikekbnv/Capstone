@@ -5,12 +5,12 @@ TODO:
 - [x] Add camera caption functionality
 - [x] Create basic gRPC endpoints (API)
 - [x] Set up docker for separate services (client, server, proxy) 
-- [ ] Create models/types for DBs
-- [ ] Integrate PostgreSQL
+- [x] Create models/types for DBs
+- [x] Integrate PostgreSQL
 - [x] Add postgres docker
 - [ ] Add admin add employee functionality
 - [ ] Add admin view/update/delete employee functionality
-- [ ] Combine backend with DBs
+- [x] Combine backend with DBs
 - [ ] Improve UI 
 - [ ] Add face-regocnition service (Python)
 - [ ] Integrate S3 storage
