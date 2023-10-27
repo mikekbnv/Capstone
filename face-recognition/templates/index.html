@@ -4,9 +4,20 @@
     <title>Image Display</title>
 </head>
 <body>
-    {% for image in images %}
-        <img src="data:image/jpeg;base64,{{ image }}" alt="Image">
-    {% endfor %}
+    <form method="post" action="/display">
+        <label for="num">Employee ID:</label>
+        <input type="number" id="num" name="num" value="">
+        <input type="submit" value="Display Images">
+    </form>
+
+    {% if images %}
+    <h2>Images</h2>
+    <div>
+        {% for image in images %}
+            <img src="data:image/jpeg;base64,{{ image }}" alt="Image">
+        {% endfor %}
+    </div>
+    {% endif %}
 </body>
 </html>
 
