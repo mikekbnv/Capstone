@@ -33,8 +33,8 @@ class Exit extends Component {
 
   handleSendRequest = () => {
     const { Id } = this.state;
-    
-    const client = new AccessClient('http://0.0.0.0:8080', null, null);
+    const url = window.location.protocol + '//' + window.location.hostname;
+    const client = new AccessClient(`${url}:8080`, null, null);
     const request = new ExitRequest();
     request.setId(Id);
     

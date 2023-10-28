@@ -70,7 +70,8 @@ class Entrance extends Component {
           const imageBytes = new Uint8Array(reader.result);
           var timestamp = Date.now(); 
           var uniqueIdentifier = Math.random().toString(36).substring(7);
-          const client = new AccessClient('http://0.0.0.0:8080', null, null);
+          const url = window.location.protocol + '//' + window.location.hostname;
+          const client = new AccessClient(`${url}:8080`, null, null);
           const request = new EntranceRequest();
           request.setId(Id);
           request.setFileName(`${Id}_${timestamp}_${uniqueIdentifier}.jpg`);

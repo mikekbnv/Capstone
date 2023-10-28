@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request
 import redis
 import base64
+import os
+from dotenv import load_dotenv
 
+#load_dotenv()
 app = Flask(__name__, template_folder='templates')
-
 r = redis.Redis(host='redis', port=6379, db=0)
 
 @app.route('/')
@@ -24,4 +26,6 @@ def display_images():
     return render_template('index.html', images=encoded_images)
 
 if __name__ == '__main__':
+    #hostaddr = os.getenv('HOSTADDR')
+    #app.run(debug=True, host=hostaddr, port=5000)
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/mikekbnv/grpc-react-web/database"
 	pb "github.com/mikekbnv/grpc-react-web/goclient"
 	"github.com/mikekbnv/grpc-react-web/internal/types"
@@ -17,9 +19,9 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	listenAddress = "0.0.0.0:9000"
-)
+// var (
+// 	listenAddress = "0.0.0.0:9000"
+// )
 
 type server struct {
 	pb.UnimplementedAccessServer
@@ -85,17 +87,17 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 	if err != nil {
 		return &pb.Response{}, err
 	}
-	err = utils.SaveToFile("data", req.FileName, buffer.Bytes())
-	if err != nil {
-		return &pb.Response{}, err
+	// err = utils.SaveToFile("data", req.FileName, buffer.Bytes())
+	// if err != nil {
+	// 	return &pb.Response{}, err
+	// }
+	id := req.Id
+	if err := database.DB.Db.First(&types.Employee{Id: id}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return &pb.Response{Access: false}, nil
 	}
 	err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", req.GetId()), buffer.Bytes()).Err()
 	if err != nil {
 		panic(err)
-	}
-	id := req.Id
-	if err := database.DB.Db.First(&types.Employee{Id: id}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
-		return &pb.Response{Access: false}, nil
 	}
 
 	//TODO: access check logic
@@ -108,6 +110,11 @@ func (s *server) ExitCheck(ctx context.Context, req *pb.ExitRequest) (*pb.Respon
 }
 
 func RunServer() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+	listenAddress := fmt.Sprintf("%s:%s", os.Getenv("HOSTADDR"), "9000")
 	lis, err := net.Listen("tcp", listenAddress)
 
 	if err != nil {
