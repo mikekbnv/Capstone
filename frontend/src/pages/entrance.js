@@ -63,7 +63,7 @@ class Entrance extends Component {
       const canvas = document.createElement('canvas');
       canvas.width = videoElement.videoWidth;
       canvas.height = videoElement.videoHeight;
-      canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+      canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width * 2, canvas.height * 2);
       canvas.toBlob((blob) => {
         const reader = new FileReader();
         reader.onload = () => {

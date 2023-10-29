@@ -32,7 +32,7 @@ services:
       dockerfile: Dockerfile
     image: mikemkbnv/grpc-web-react
     ports:
-      - "3000:3000"
+      - "3000:80"
     # links:
     #   - envoy
   face-recognition:

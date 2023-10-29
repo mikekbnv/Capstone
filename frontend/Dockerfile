@@ -1,15 +1,26 @@
-FROM node:14
+# FROM node:14
 
-WORKDIR /app
+# WORKDIR /app
 
-COPY package*.json ./
+# # RUN npm install
 
-# RUN npm install
+# COPY . .
 
-COPY . .
+# # RUN npm run build
 
-RUN npm run build
+# EXPOSE 3000
 
-EXPOSE 3000
+# #CMD ["npm", "start"]
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
 
-CMD ["npm", "start"]
+# make from nginx
+FROM nginx:latest
+
+COPY build/ /usr/share/nginx/html
+
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
+

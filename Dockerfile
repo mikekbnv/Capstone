@@ -2,9 +2,9 @@ FROM golang:latest
 
 WORKDIR /app
 
-COPY  . ./
+COPY ./.env .
+COPY  ./main .
 
-RUN go build main.go
 
 EXPOSE 9000
 
