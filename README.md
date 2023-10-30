@@ -8,11 +8,11 @@ TODO:
 - [x] Create models/types for DBs
 - [x] Integrate PostgreSQL
 - [x] Add postgres docker
-- [ ] Add admin add employee functionality
-- [ ] Add admin view/update/delete employee functionality
+- [x] Add admin add employee functionality
+- [x] Add admin view/update/delete employee functionality
 - [x] Combine backend with DBs
-- [ ] Improve UI 
-- [ ] Add face-regocnition service (Python)
-- [ ] Integrate S3 storage
-- [ ] Combine face-recognition service with S3
+- [x] Improve UI 
+- [x] Add face-regocnition service (Python)
+- [x] Integrate S3 storage
+- [x] Combine face-recognition service with S3
 - [ ] Implement functional components for React
