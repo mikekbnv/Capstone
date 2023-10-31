@@ -33,7 +33,6 @@ services:
     image: mikemkbnv/grpc-web-react
     ports:
       - "3000:80"
-      - "443:443"
     # links:
     #   - envoy
   face-recognition:
