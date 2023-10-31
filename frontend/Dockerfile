@@ -19,12 +19,20 @@ FROM nginx:latest
 COPY build/ /usr/share/nginx/html
 
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
 # FROM nginx:latest
 # COPY nginx.conf /etc/nginx/nginx.conf
-# COPY my-site.crt /etc/ssl/certs/my-site.crt
-# COPY my-site.key /etc/ssl/private/my-site.key
+COPY ./nginx-selfsigned.crt /etc/ssl/certs/nginx-selfsigned.crt
+COPY ./nginx-selfsigned.key /etc/ssl/private/nginx-selfsigned.key
+COPY ./dhparam.pem /etc/nginx/dhparam.pem
+
+# RUN ufw allow 'Nginx Full'
+# RUN ufw delete allow 'Nginx HTTP'
+
 
 EXPOSE 80
+
+
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
 
