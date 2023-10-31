@@ -12,6 +12,20 @@ r = redis.Redis(host='redis', port=6379, db=0)
 def home():
     return render_template('index.html')
 
+@app.route('/check', methods=['POST'])
+def check():
+    image_data = request.form['photo']
+    id = int(request.form['num'])
+    image_data_list = r.lrange(str(id) + '-photos', 0, id - 1)
+    print(str(id) + '-photos')
+    encoded_images = []
+    for img_data in image_data_list:
+        encoded_image = base64.b64encode(img_data).decode('utf-8')
+        encoded_images.append(encoded_image)
+    return 'OK'
+
+
+
 @app.route('/display', methods=['POST'])
 def display_images():
     num_images = int(request.form['num'])

@@ -3,10 +3,12 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -95,6 +97,31 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 	if err := database.DB.Db.First(&types.Employee{Id: id}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		return &pb.Response{Access: false}, nil
 	}
+
+	fmt.Println("testing")
+
+	data := map[string]interface{}{
+		"photo": buffer.String(),
+		"id":    id,
+	}
+
+	payload, err := json.Marshal(data)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return &pb.Response{Access: false}, nil
+	}
+
+	check, err := http.Post("http://face-recognition:5000/check", "application/json", bytes.NewBuffer(payload))
+	if err != nil {
+		fmt.Println("Error:", err)
+		return &pb.Response{Access: false}, nil
+	}
+
+	defer check.Body.Close()
+	var result map[string]interface{}
+	json.NewDecoder(check.Body).Decode(&result)
+	fmt.Println(result)
+
 	err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", req.GetId()), buffer.Bytes()).Err()
 	if err != nil {
 		panic(err)
