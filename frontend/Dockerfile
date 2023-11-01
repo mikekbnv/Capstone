@@ -22,9 +22,13 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 # FROM nginx:latest
 # COPY nginx.conf /etc/nginx/nginx.conf
+
 COPY ./nginx-selfsigned.crt /etc/ssl/certs/nginx-selfsigned.crt
 COPY ./nginx-selfsigned.key /etc/ssl/private/nginx-selfsigned.key
 COPY ./dhparam.pem /etc/nginx/dhparam.pem
+COPY ./snippets/ssl-params.conf /etc/nginx/snippets/ssl-params.conf
+COPY ./snippets/self-signed.conf /etc/nginx/snippets/self-signed.conf
+
 
 # RUN ufw allow 'Nginx Full'
 # RUN ufw delete allow 'Nginx HTTP'
