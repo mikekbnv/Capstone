@@ -77,7 +77,8 @@ class Entrance extends Component {
           request.setId(Id);
           request.setFileName(`${Id}_${timestamp}_${uniqueIdentifier}.jpg`);
           request.setChunk(imageBytes);
-
+          console.log(request);
+          console.log(client)
           client.accessCheck(request, {}, (err, response) => {
             if (!err) {
               const responseText = response.getAccess();
