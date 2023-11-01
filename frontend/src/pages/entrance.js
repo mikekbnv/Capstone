@@ -70,7 +70,7 @@ class Entrance extends Component {
           const imageBytes = new Uint8Array(reader.result);
           var timestamp = Date.now(); 
           var uniqueIdentifier = Math.random().toString(36).substring(7);
-          const url = 'http' + '//' + window.location.hostname;
+          const url = 'http:' + '//' + window.location.hostname;
           console.log(url);
           const client = new AccessClient(`${url}:8080`, null, null);
           const request = new EntranceRequest();
