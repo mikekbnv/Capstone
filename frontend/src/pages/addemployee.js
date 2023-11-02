@@ -55,7 +55,7 @@ class AddEmployee extends Component {
   handleSendRequest = () => {
     const {fname, lname, position, photoBytes } = this.state;
     const url = window.location.protocol + '//' + window.location.hostname;
-    const client = new AccessClient(`${url}:8080`, null, null); 
+    const client = new AccessClient(`${url}:443`, null, null); 
     const request = new EmployeeRequest();
     const employee = new Employee();
     employee.setFname(fname);

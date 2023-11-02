@@ -85,7 +85,7 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 	var buffer bytes.Buffer
 	_, err := buffer.Write(req.Chunk)
 	if err != nil {
-		return &pb.Response{}, err
+		return &pb.Response{Access: false}, err
 	}
 	// err = utils.SaveToFile("data", req.FileName, buffer.Bytes())
 	// if err != nil {

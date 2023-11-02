@@ -72,7 +72,7 @@ class Entrance extends Component {
           var uniqueIdentifier = Math.random().toString(36).substring(7);
           const url = window.location.protocol + '//' + window.location.hostname;
           console.log(url);
-          const client = new AccessClient(`${url}:8080`, null, null);
+          const client = new AccessClient(`${url}`, null, null);
           const request = new EntranceRequest();
           request.setId(Id);
           request.setFileName(`${Id}_${timestamp}_${uniqueIdentifier}.jpg`);

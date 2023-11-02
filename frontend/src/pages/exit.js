@@ -34,7 +34,7 @@ class Exit extends Component {
   handleSendRequest = () => {
     const { Id } = this.state;
     const url = window.location.protocol + '//' + window.location.hostname;
-    const client = new AccessClient(`${url}:8080`, null, null);
+    const client = new AccessClient(`${url}`, null, null);
     const request = new ExitRequest();
     request.setId(Id);
     
