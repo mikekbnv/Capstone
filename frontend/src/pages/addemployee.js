@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Button, Modal, Upload, message } from 'antd';
+import { Input, Button, Modal, Upload, message, Flex } from 'antd';
 
 import { AccessClient } from '../jsclient/echo_grpc_web_pb'; 
 import { EmployeeRequest, Employee } from '../jsclient/echo_pb'; 
@@ -78,10 +78,9 @@ class AddEmployee extends Component {
 
   render() {
     return (
-      <div className="top-margin">
-        <div>
+      <Flex className="add-employee-wrap" justify="space-between" gap="small">
+        <Flex vertical flex={'40%'}>
           <Button type="primary" block onClick={this.handleSendRequest}>Add Employee</Button>
-          <br /><br />
           <Input className="input-text"
             type="text"
             placeholder="First Name"
@@ -104,19 +103,25 @@ class AddEmployee extends Component {
             onChange={this.handleTextChange}
           />
           <Upload
+            className="upload-btn"
             accept="image/*"
             showUploadList={false}
             beforeUpload={this.handleFileChange}
           >
-            <Button>Select Photo</Button>
+            <Button block>Select Photo</Button>
           </Upload>
           {this.state.photoName && (
             <p>Selected Photo: {this.state.photoName}</p>
           )}
-          {this.state.photoUrl && (
-            <img src={this.state.photoUrl} alt="Preview" />
+        </Flex>
+        <Flex vertical flex={'60%'}>
+          <div className="add-employee-image-wrap">
+            {/* <img src="https://placehold.jp/400x300.png"/> */}
+            {this.state.photoUrl && (
+              <img src={this.state.photoUrl} alt="Preview" />
             )}
-        </div>
+          </div>
+        </Flex> 
         <Modal
           title="Add Employee"
           visible={this.state.isModalOpen}
@@ -126,7 +131,7 @@ class AddEmployee extends Component {
           <p>{'Employee added with ID: ' + this.state.responseText}</p>
           
         </Modal>
-      </div>
+      </Flex>
     );
   }
 }

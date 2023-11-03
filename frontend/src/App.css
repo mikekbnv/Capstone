@@ -8,6 +8,28 @@
   margin-top: 50px;
 }
 
+.add-employee-wrap {
+  margin-top: 50px;
+}
+
+.add-employee-wrap button,
+.add-employee-wrap input {
+  margin-bottom: 10px;
+}
+
+.upload-btn, 
+.ant-upload {
+  width: 100%;
+}
+
 .input-text {
   text-align: center;
+}
+
+.add-employee-image-wrap {
+  max-width: 400px;
+}
+
+.add-employee-image-wrap img {
+  width: 100%;
 }
