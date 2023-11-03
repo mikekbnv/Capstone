@@ -19,7 +19,7 @@ class ListEmployees extends Component {
 
   componentDidMount() {
     const url = window.location.protocol + '//' + window.location.hostname;
-    const client = new AccessClient(`${url}:8080`, null, null);  // Replace with your gRPC server URL
+    const client = new AccessClient(`${url}`, null, null); 
     const request = new EmptyRequest();
 
     client.listEmployees(request, {}, (err, response) => {
@@ -33,7 +33,7 @@ class ListEmployees extends Component {
 
   handleDelete = (id) => {
     const url = window.location.protocol + '//' + window.location.hostname;
-    const client = new AccessClient(`${url}`, null, null);  // Replace with your gRPC server URL
+    const client = new AccessClient(`${url}`, null, null); 
     const request = new DeleteEmployeeRequest();
     request.setId(id);
 
