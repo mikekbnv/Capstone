@@ -19,7 +19,7 @@ class Entrance extends Component {
     this.state = {
       Id: '',
       videoStream: null,
-      responseText: '',
+      responseText: null,
       isModalOpen: false,
     };
     this.videoRef = React.createRef();
@@ -98,13 +98,10 @@ class Entrance extends Component {
   };
 
   componentDidMount() {
-    // useEffect
     this.startCamera();
   }
 
   componentWillUnmount() {
-    // useEffect
-
     this.stopCamera();
   }
 

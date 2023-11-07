@@ -21,3 +21,4 @@ func SaveToFile(folderPath, fileName string, data []byte) error {
 
 	return nil
 }
+

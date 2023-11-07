@@ -3,11 +3,14 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/mikekbnv/grpc-react-web/database"
@@ -87,50 +90,81 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 	if err != nil {
 		return &pb.Response{Access: false}, err
 	}
+
 	// err = utils.SaveToFile("data", req.FileName, buffer.Bytes())
 	// if err != nil {
 	// 	return &pb.Response{}, err
 	// }
+
 	id := req.Id
 	if err := database.DB.Db.First(&types.Employee{Id: id}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		return &pb.Response{Access: false}, nil
 	}
 
-	// fmt.Println("testing")
+	var visit_log types.Visit_log
+	_ = database.DB.Db.Where("employee_id = ?", id).Last(&visit_log)
+	log.Println(visit_log)
+	fmt.Println(visit_log)
 
-	// data := map[string]interface{}{
-	// 	"photo": buffer.String(),
-	// 	"id":    id,
-	// }
+	if visit_log.Status == "in" {
+		return &pb.Response{Access: false}, nil
+	}
+	var entrance_log types.Visit_log
+	entrance_log.Employee_id = int(id)
+	entrance_log.Status = "in"
+	entrance_log.Date = time.Now()
+	database.DB.Db.Create(&entrance_log)
 
-	// payload, err := json.Marshal(data)
-	// if err != nil {
-	// 	fmt.Println("Error:", err)
-	// 	return &pb.Response{Access: false}, nil
-	// }
-
-	// check, err := http.Post("http://face-recognition:5000/check", "application/json", bytes.NewBuffer(payload))
-	// if err != nil {
-	// 	fmt.Println("Error:", err)
-	// 	return &pb.Response{Access: false}, nil
-	// }
-
-	// defer check.Body.Close()
-	// var result map[string]interface{}
-	// json.NewDecoder(check.Body).Decode(&result)
-	// fmt.Println(result)
-
-	err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", req.GetId()), buffer.Bytes()).Err()
-	if err != nil {
-		panic(err)
+	data := map[string]interface{}{
+		"Image": buffer.Bytes(),
+		"Id":    id,
 	}
 
-	//TODO: access check logic
-	return &pb.Response{Access: true}, nil
+	payload, err := json.Marshal(data)
+	if err != nil {
+		return &pb.Response{Access: false}, nil
+	}
+
+	check, err := http.Post("http://face-recognition:5000/check", "application/json", bytes.NewBuffer(payload))
+	if err != nil {
+		return &pb.Response{Access: false}, nil
+	}
+
+	defer check.Body.Close()
+	var result map[string]interface{}
+	json.NewDecoder(check.Body).Decode(&result)
+	fmt.Println(result)
+
+	if result["message"] == "OK" {
+		err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", req.GetId()), buffer.Bytes()).Err()
+		if err != nil {
+			panic(err)
+		}
+
+		return &pb.Response{Access: true}, nil
+	}
+
+	return &pb.Response{Access: false}, nil
 }
 func (s *server) ExitCheck(ctx context.Context, req *pb.ExitRequest) (*pb.Response, error) {
-	//TODO: exit check logic
-	log.Printf("Recieved a msg: %v", req.Id)
+	id := req.Id
+	if err := database.DB.Db.First(&types.Employee{Id: id}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return &pb.Response{Access: false}, nil
+	}
+
+	var visit_log types.Visit_log
+	_ = database.DB.Db.Where("employee_id = ?", id).Last(&visit_log)
+
+	if visit_log.Status == "out" {
+		return &pb.Response{Access: false}, nil
+	}
+	var exit_log types.Visit_log
+	exit_log.Employee_id = int(id)
+	exit_log.Status = "out"
+	exit_log.Date = time.Now()
+
+	database.DB.Db.Create(&exit_log)
+
 	return &pb.Response{Access: true}, nil
 }
 

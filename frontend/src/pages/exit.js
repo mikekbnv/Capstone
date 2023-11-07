@@ -18,7 +18,7 @@ class Exit extends Component {
     super(props);
     this.state = {
       Id: '',
-      responseText: '',
+      responseText: null,
       isModalOpen: false,
     };
   }
@@ -30,6 +30,7 @@ class Exit extends Component {
   closeModal = () => {
     this.setState({ isModalOpen: false });
   }
+  
 
   handleSendRequest = () => {
     const { Id } = this.state;
@@ -37,13 +38,13 @@ class Exit extends Component {
     const client = new AccessClient(`${url}`, null, null);
     const request = new ExitRequest();
     request.setId(Id);
-    
+    //var trueTypeOf = (obj) => Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
     client.exitCheck(request, {}, (err, response) => {
       if (!err) {
         const responseText = response.getAccess();
         this.setState({ isModalOpen: true});
-        console.log('Response:', responseText);
-        this.setState({ responseText: responseText.toString(), isModalOpen: true });
+        //console.log('Response:', trueTypeOf(responseText), responseText);
+        this.setState({ responseText: responseText, isModalOpen: true });
       } else {
         console.error('Error:', err);
       }
@@ -67,10 +68,11 @@ class Exit extends Component {
           title="Exit" 
           open={this.state.isModalOpen} 
           onCancel={this.closeModal}
-          footer={() => <ModalFooter onClose={this.closeModal} isAuth={true} />}
+          footer={() => <ModalFooter onClose={this.closeModal} isAuth={this.state.responseText} />}
         >
           <p>{this.state.responseText ? 'Bye...' : 'Not allowed'}</p>
         </Modal>
+
       </div>
     );
   }
