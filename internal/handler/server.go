@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -65,7 +66,7 @@ func (s *server) AddEmployee(ctx context.Context, req *pb.EmployeeRequest) (*pb.
 	if err != nil {
 		return &pb.EmployeeResponse{}, err
 	}
-	err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", employee.Id), photo.Bytes()).Err()
+	err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", employee.Id), base64.StdEncoding.EncodeToString(photo.Bytes())).Err()
 	if err != nil {
 		panic(err)
 	}
@@ -103,8 +104,8 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 
 	var visit_log types.Visit_log
 	_ = database.DB.Db.Where("employee_id = ?", id).Last(&visit_log)
-	log.Println(visit_log)
-	fmt.Println(visit_log)
+	// log.Println(visit_log)
+	// fmt.Println(visit_log)
 
 	if visit_log.Status == "in" {
 		return &pb.Response{Access: false}, nil
@@ -113,10 +114,9 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 	entrance_log.Employee_id = int(id)
 	entrance_log.Status = "in"
 	entrance_log.Date = time.Now()
-	database.DB.Db.Create(&entrance_log)
 
 	data := map[string]interface{}{
-		"Image": buffer.Bytes(),
+		"Image": base64.StdEncoding.EncodeToString(buffer.Bytes()),
 		"Id":    id,
 	}
 
@@ -127,20 +127,21 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 
 	check, err := http.Post("http://face-recognition:5000/check", "application/json", bytes.NewBuffer(payload))
 	if err != nil {
+		log.Println(err)
 		return &pb.Response{Access: false}, nil
 	}
 
 	defer check.Body.Close()
 	var result map[string]interface{}
 	json.NewDecoder(check.Body).Decode(&result)
-	fmt.Println(result)
+	log.Println(result)
 
 	if result["message"] == "OK" {
-		err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", req.GetId()), buffer.Bytes()).Err()
+		err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", req.GetId()), base64.StdEncoding.EncodeToString(buffer.Bytes())).Err()
 		if err != nil {
 			panic(err)
 		}
-
+		database.DB.Db.Create(&entrance_log)
 		return &pb.Response{Access: true}, nil
 	}
 
@@ -154,8 +155,8 @@ func (s *server) ExitCheck(ctx context.Context, req *pb.ExitRequest) (*pb.Respon
 
 	var visit_log types.Visit_log
 	_ = database.DB.Db.Where("employee_id = ?", id).Last(&visit_log)
-
-	if visit_log.Status == "out" {
+	
+	if visit_log.Status == "out" || visit_log.Status == ""{
 		return &pb.Response{Access: false}, nil
 	}
 	var exit_log types.Visit_log
