@@ -37,10 +37,11 @@ services:
     # links:
     #   - envoy
   face-recognition:
-    build:
-      context: ./face-recognition
-      dockerfile: Dockerfile
-    mem_limit: 10g
+    #platform: linux/amd64
+    # build:
+    #   context: ./face-recognition
+    #   dockerfile: Dockerfile
+    image: mkkbnv/reco:latest
     ports:
       - 5000:5000
     depends_on:

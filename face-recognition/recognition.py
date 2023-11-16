@@ -54,7 +54,7 @@ def check():
         face_encoding_a = face_recognition.face_encodings(image_a)[0]
         face_encoding_b = face_recognition.face_encodings(image_b)[0]
         
-        results = face_recognition.compare_faces([face_encoding_a], face_encoding_b, )
+        results = face_recognition.compare_faces([face_encoding_a], face_encoding_b)
         print(results, file=sys.stderr)
         # os.remove(f"{str(id)}-a.jpg")
         # os.remove(f"{str(id)}-b.jpg")
