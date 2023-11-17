@@ -19,7 +19,6 @@ def home():
 @app.route('/check', methods=['POST'])
 def check():
     # try:
-        return jsonify({"message": "OK"})
         data = request.get_json()
         #print(data, file=sys.stderr)
         id = data.get("Id", None)  

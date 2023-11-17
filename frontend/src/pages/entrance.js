@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Button, Modal, Upload, message } from 'antd';
+import { Input, Button, Modal } from 'antd';
 
 import { AccessClient } from '../jsclient/echo_grpc_web_pb';
 import { EntranceRequest } from '../jsclient/echo_pb';
@@ -20,9 +20,6 @@ class Entrance extends Component {
       Id: '',
       videoStream: null,
       responseText: null,
-      photoName: '',
-      photoUrl: null,
-      photoBytes: '',
       isModalOpen: false,
     };
     this.videoRef = React.createRef();
@@ -30,21 +27,6 @@ class Entrance extends Component {
 
   handleTextChange = (event) => {
     this.setState({ Id: event.target.value });
-  };
-  handleFileChange = (file) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const photoBytes = new Uint8Array(event.target.result);
-      if (!photoBytes || photoBytes.length === 0) {
-        message.error('Error reading the selected photo.');
-        return;
-      }
-      this.setState({ photoBytes }); 
-      this.setState({ photoName: file.name });
-      const photoUrl = URL.createObjectURL(file);
-      this.setState({ photoUrl });
-    };
-    reader.readAsArrayBuffer(file);
   };
 
   startCamera = async () => {
@@ -74,18 +56,18 @@ class Entrance extends Component {
   }
 
   handleSendRequest = () => {
-    const {Id, photoBytes } = this.state;
-    // const videoElement = this.videoRef.current;
+    const { Id } = this.state;
+    const videoElement = this.videoRef.current;
 
-    // if (videoElement) {
-    //   const canvas = document.createElement('canvas');
-    //   canvas.width = videoElement.videoWidth;
-    //   canvas.height = videoElement.videoHeight;
-    //   canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height );
-    //   canvas.toBlob((blob) => {
-    //     const reader = new FileReader();
-    //     reader.onload = () => {
-    //       const imageBytes = new Uint8Array(reader.result);
+    if (videoElement) {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+      canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height );
+      canvas.toBlob((blob) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const imageBytes = new Uint8Array(reader.result);
           var timestamp = Date.now(); 
           var uniqueIdentifier = Math.random().toString(36).substring(7);
           const url = window.location.protocol + '//' + window.location.hostname;
@@ -94,7 +76,7 @@ class Entrance extends Component {
           const request = new EntranceRequest();
           request.setId(Id);
           request.setFileName(`${Id}_${timestamp}_${uniqueIdentifier}.jpg`);
-          request.setChunk(photoBytes);
+          request.setChunk(imageBytes);
           console.log(request);
           console.log(client)
           client.accessCheck(request, {}, (err, response) => {
@@ -108,11 +90,12 @@ class Entrance extends Component {
             }
           });
         };
-      //   reader.readAsArrayBuffer(blob);
-      // });
-    // } else {
-    //   console.error('Camera not started.');
-    // }
+        reader.readAsArrayBuffer(blob);
+      });
+    } else {
+      console.error('Camera not started.');
+    }
+  };
 
   componentDidMount() {
     this.startCamera();
@@ -136,20 +119,8 @@ class Entrance extends Component {
           />
         </div>
         <div>
-          {/* <video className="camera-caption" ref={this.videoRef} autoPlay /> */}
-          <Upload
-            className="upload-btn"
-            accept="image/*"
-            showUploadList={false}
-            beforeUpload={this.handleFileChange}
-          >
-            <Button block>Select Photo</Button>
-          </Upload>
-          {this.state.photoName && (
-            <p>Selected Photo: {this.state.photoName}</p>
-          )}
+          <video className="camera-caption" ref={this.videoRef} autoPlay />
         </div>
-        
         <Modal 
           title="Access" 
           open={this.state.isModalOpen} 
