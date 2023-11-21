@@ -21,6 +21,7 @@ class Entrance extends Component {
       videoStream: null,
       responseText: null,
       isModalOpen: false,
+      loading: false
     };
     this.videoRef = React.createRef();
   }
@@ -44,9 +45,6 @@ class Entrance extends Component {
     const { videoStream } = this.state;
     if (videoStream) {
       videoStream.getTracks().forEach((track) => track.stop());
-    // setState -> useState => [value, setValue]
-    // setVideoStream(null)
-
       this.setState({ videoStream: null });
     }
   };
@@ -77,17 +75,17 @@ class Entrance extends Component {
           request.setId(Id);
           request.setFileName(`${Id}_${timestamp}_${uniqueIdentifier}.jpg`);
           request.setChunk(imageBytes);
-          console.log(request);
-          console.log(client)
+          this.setState({ loading: true });
           client.accessCheck(request, {}, (err, response) => {
+            
             if (!err) {
               const responseText = response.getAccess();
               this.setState({ isModalOpen: true});
-              console.log('Response:', responseText);
               this.setState({ responseText: responseText, isModalOpen: true });
             } else {
               console.error('Error:', err);
             }
+            this.setState({ loading: false });
           });
         };
         reader.readAsArrayBuffer(blob);
@@ -109,7 +107,7 @@ class Entrance extends Component {
     return (
       <div className="top-margin">
         <div>
-          <Button type="primary" block onClick={this.handleSendRequest}>Get access</Button>
+          <Button type="primary" block disabled={this.state.loading} onClick={this.handleSendRequest}>Get access</Button>
           <br /><br />
           <Input  className="input-text"
             type="text"
@@ -120,6 +118,7 @@ class Entrance extends Component {
         </div>
         <div>
           <video className="camera-caption" ref={this.videoRef} autoPlay />
+
         </div>
         <Modal 
           title="Access" 

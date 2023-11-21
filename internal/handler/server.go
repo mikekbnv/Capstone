@@ -23,14 +23,11 @@ import (
 	"gorm.io/gorm"
 )
 
-// var (
-// 	listenAddress = "0.0.0.0:9000"
-// )
-
 type server struct {
 	pb.UnimplementedAccessServer
 }
 
+// Sent the list of employees to the client from the database
 func (s *server) ListEmployees(ctx context.Context, req *pb.EmptyRequest) (*pb.ListEmployeesResponse, error) {
 
 	employees := []types.Employee{}
@@ -49,6 +46,8 @@ func (s *server) ListEmployees(ctx context.Context, req *pb.EmptyRequest) (*pb.L
 	return resp, nil
 
 }
+
+// Add a new employee to the database 
 func (s *server) AddEmployee(ctx context.Context, req *pb.EmployeeRequest) (*pb.EmployeeResponse, error) {
 
 	employee := new(types.Employee)
@@ -73,6 +72,8 @@ func (s *server) AddEmployee(ctx context.Context, req *pb.EmployeeRequest) (*pb.
 	return &pb.EmployeeResponse{Id: int32(employee.Id)}, nil
 
 }
+
+// Delete an employee from the database
 func (s *server) DeleteEmployee(ctx context.Context, req *pb.DeleteEmployeeRequest) (*pb.EmptyResponse, error) {
 
 	employee := new(types.Employee)
@@ -85,17 +86,14 @@ func (s *server) DeleteEmployee(ctx context.Context, req *pb.DeleteEmployeeReque
 	return &pb.EmptyResponse{}, nil
 }
 
+
+// If the person is in the database and the picture is the same person, than add the picture to the database and add the visit log to the database
 func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.Response, error) {
 	var buffer bytes.Buffer
 	_, err := buffer.Write(req.Chunk)
 	if err != nil {
 		return &pb.Response{Access: false}, err
 	}
-
-	// err = utils.SaveToFile("data", req.FileName, buffer.Bytes())
-	// if err != nil {
-	// 	return &pb.Response{}, err
-	// }
 
 	id := req.Id
 	if err := database.DB.Db.First(&types.Employee{Id: id}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
@@ -104,8 +102,6 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 
 	var visit_log types.Visit_log
 	_ = database.DB.Db.Where("employee_id = ?", id).Last(&visit_log)
-	// log.Println(visit_log)
-	// fmt.Println(visit_log)
 
 	if visit_log.Status == "in" {
 		return &pb.Response{Access: false}, nil
@@ -147,6 +143,8 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 
 	return &pb.Response{Access: false}, nil
 }
+
+// Provide exit from the office only if the person is in the database and has not yet left the office
 func (s *server) ExitCheck(ctx context.Context, req *pb.ExitRequest) (*pb.Response, error) {
 	id := req.Id
 	if err := database.DB.Db.First(&types.Employee{Id: id}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
@@ -169,6 +167,7 @@ func (s *server) ExitCheck(ctx context.Context, req *pb.ExitRequest) (*pb.Respon
 	return &pb.Response{Access: true}, nil
 }
 
+// Start the backend grpc server
 func RunServer() {
 	err := godotenv.Load(".env")
 	if err != nil {

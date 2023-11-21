@@ -38,12 +38,10 @@ class Exit extends Component {
     const client = new AccessClient(`${url}`, null, null);
     const request = new ExitRequest();
     request.setId(Id);
-    //var trueTypeOf = (obj) => Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
     client.exitCheck(request, {}, (err, response) => {
       if (!err) {
         const responseText = response.getAccess();
         this.setState({ isModalOpen: true});
-        //console.log('Response:', trueTypeOf(responseText), responseText);
         this.setState({ responseText: responseText, isModalOpen: true });
       } else {
         console.error('Error:', err);

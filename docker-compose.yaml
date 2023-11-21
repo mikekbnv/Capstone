@@ -12,20 +12,6 @@ services:
       - "8080:8080"
     links:
       - access-server
-
-  access-server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: mikemkbnv/grpc-web-access
-    ports:
-      - "9000:9000"
-    depends_on:
-      - db
-      - redis
-    volumes:
-      - /Users/mkkbnv/go/src/grpc-react-web/images:/app/data
-
   react-app:
     build:
       context: ./frontend
@@ -34,16 +20,14 @@ services:
     ports:
       - "3000:80"
       - "443:443"
-    # links:
-    #   - envoy
   face-recognition:
-    #platform: linux/amd64
     # build:
     #   context: ./face-recognition
     #   dockerfile: Dockerfile
     image: mkkbnv/reco:latest
     ports:
       - 5000:5000
+    restart: on-failure
     depends_on:
       - redis
   db:
@@ -60,6 +44,18 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
+  access-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mikemkbnv/grpc-web-access
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - /Users/mkkbnv/go/src/grpc-react-web/images:/app/data
 
 volumes:
   postgres-db:
