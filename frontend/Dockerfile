@@ -1,19 +1,3 @@
-# FROM node:14
-
-# WORKDIR /app
-
-# # RUN npm install
-
-# COPY . .
-
-# # RUN npm run build
-
-# EXPOSE 3000
-
-# #CMD ["npm", "start"]
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
-
-# make from nginx
 FROM nginx:latest
 
 COPY build/ /usr/share/nginx/html
@@ -29,14 +13,7 @@ COPY ./dhparam.pem /etc/nginx/dhparam.pem
 COPY ./snippets/ssl-params.conf /etc/nginx/snippets/ssl-params.conf
 COPY ./snippets/self-signed.conf /etc/nginx/snippets/self-signed.conf
 
-
-# RUN ufw allow 'Nginx Full'
-# RUN ufw delete allow 'Nginx HTTP'
-
-
 EXPOSE 80
-
-
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
 

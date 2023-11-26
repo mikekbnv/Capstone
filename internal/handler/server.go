@@ -43,11 +43,11 @@ func (s *server) ListEmployees(ctx context.Context, req *pb.EmptyRequest) (*pb.L
 		})
 	}
 	resp.Employees = data
-	return resp, nil
 
+	return resp, nil
 }
 
-// Add a new employee to the database 
+// Add a new employee to the database
 func (s *server) AddEmployee(ctx context.Context, req *pb.EmployeeRequest) (*pb.EmployeeResponse, error) {
 
 	employee := new(types.Employee)
@@ -55,7 +55,9 @@ func (s *server) AddEmployee(ctx context.Context, req *pb.EmployeeRequest) (*pb.
 	employee.Last_Name = req.Employee.GetLname()
 	employee.Role = req.Employee.GetPosition()
 	var photo bytes.Buffer
+
 	_, err := photo.Write(req.Employee.GetPhoto())
+
 	if err != nil {
 		return &pb.EmployeeResponse{}, err
 	}
@@ -69,8 +71,8 @@ func (s *server) AddEmployee(ctx context.Context, req *pb.EmployeeRequest) (*pb.
 	if err != nil {
 		panic(err)
 	}
-	return &pb.EmployeeResponse{Id: int32(employee.Id)}, nil
 
+	return &pb.EmployeeResponse{Id: int32(employee.Id)}, nil
 }
 
 // Delete an employee from the database
@@ -86,11 +88,13 @@ func (s *server) DeleteEmployee(ctx context.Context, req *pb.DeleteEmployeeReque
 	return &pb.EmptyResponse{}, nil
 }
 
-
 // If the person is in the database and the picture is the same person, than add the picture to the database and add the visit log to the database
 func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.Response, error) {
+
 	var buffer bytes.Buffer
+
 	_, err := buffer.Write(req.Chunk)
+
 	if err != nil {
 		return &pb.Response{Access: false}, err
 	}
@@ -106,6 +110,7 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 	if visit_log.Status == "in" {
 		return &pb.Response{Access: false}, nil
 	}
+
 	var entrance_log types.Visit_log
 	entrance_log.Employee_id = int(id)
 	entrance_log.Status = "in"
@@ -123,14 +128,14 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 
 	check, err := http.Post("http://face-recognition:5000/check", "application/json", bytes.NewBuffer(payload))
 	if err != nil {
-		log.Println(err)
+		//log.Println(err)
 		return &pb.Response{Access: false}, nil
 	}
 
 	defer check.Body.Close()
 	var result map[string]interface{}
 	json.NewDecoder(check.Body).Decode(&result)
-	log.Println(result)
+	//log.Println(result)
 
 	if result["message"] == "OK" {
 		err = database.RDB.LPush(ctx, fmt.Sprintf("%d-photos", req.GetId()), base64.StdEncoding.EncodeToString(buffer.Bytes())).Err()
@@ -146,6 +151,7 @@ func (s *server) AccessCheck(ctx context.Context, req *pb.EntranceRequest) (*pb.
 
 // Provide exit from the office only if the person is in the database and has not yet left the office
 func (s *server) ExitCheck(ctx context.Context, req *pb.ExitRequest) (*pb.Response, error) {
+	
 	id := req.Id
 	if err := database.DB.Db.First(&types.Employee{Id: id}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		return &pb.Response{Access: false}, nil
@@ -153,8 +159,8 @@ func (s *server) ExitCheck(ctx context.Context, req *pb.ExitRequest) (*pb.Respon
 
 	var visit_log types.Visit_log
 	_ = database.DB.Db.Where("employee_id = ?", id).Last(&visit_log)
-	
-	if visit_log.Status == "out" || visit_log.Status == ""{
+
+	if visit_log.Status == "out" || visit_log.Status == "" {
 		return &pb.Response{Access: false}, nil
 	}
 	var exit_log types.Visit_log

@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/gorm"
 )
-
+//Types used in the project
 type Employee struct {
 	gorm.Model
 	Id         int32  `json:"id" gorm:"primaryKey;autoIncrement;not null"`

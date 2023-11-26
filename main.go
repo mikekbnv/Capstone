@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	// Connection to the databases
 	database.ConnectDb()
 	_, err := database.RDB.Ping(database.Ctx).Result()
 	if err != nil {
